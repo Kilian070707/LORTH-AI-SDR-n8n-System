@@ -1,0 +1,845 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "seconds"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -2720,
+        464
+      ],
+      "id": "50602e31-db75-4fad-8004-541740f4f544",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "limit": 1,
+        "options": {
+          "where": "=(Statut,is,null)~and(quality,eq,good)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2496,
+        464
+      ],
+      "id": "81a205f2-423c-4802-892a-0dddce8e3492",
+      "name": "Fetch Lead",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Fetch Lead').item.json.Website }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "exists",
+                      "singleValue": true
+                    },
+                    "id": "80b7ef62-7334-4968-9894-345cf9f55a40"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Has Website"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1161494f-8f5e-44ca-8e68-d3e76a8b4b2c",
+                    "leftValue": "={{ $('Fetch Lead').item.json.Website }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notExists",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "No Website"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2048,
+        464
+      ],
+      "id": "3b47d5e3-bf10-4e37-a363-71e4a2538545",
+      "name": "Check Website"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Lead').item.json.Id }}"
+            },
+            {
+              "fieldName": "=Statut",
+              "fieldValue": "Pas de site"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -1824,
+        560
+      ],
+      "id": "57ef1740-201c-407d-a275-658578ce2328",
+      "name": "Update Status No Website",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://your-browserless-api.com/scrape",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{{ $('Fetch Lead').item.json.Website }}\",\n  \"elements\": [\n    {\n      \"selector\": \"body\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "cf51b0ce-8ebf-4f21-9612-19b1703baf46",
+      "name": "Scrape Website",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4,
+      "position": [
+        -1824,
+        368
+      ],
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "42f7fb70-5b5c-4b68-b7f7-b71561730248",
+              "leftValue": "={{ $json.data?.[0]?.results?.[0]?.html || \"\" }}.",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "35a7b2ea-7f5e-4008-9294-412dc86fbaaf",
+      "name": "Is Scraping Successful",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        -1600,
+        272
+      ]
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Lead').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Erreur scraping"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -1376,
+        416
+      ],
+      "id": "e986dfe9-33ee-4be1-aa6a-49e568da530c",
+      "name": "Update Status Scraping Error",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Website text to analyze:\n{{ $json.clean_text }}\n\nAnalysis Instructions:\n\nIdentify what the company sells and to whom (B2B or B2C).\nLook for evidence of lead generation (mention of a demo, free consultation, audit, contact forms).\nEvaluate if their average order value (their selling price) seems high.\n\nStep 1: GO / NO_GO Decision. \nIf the prospect matches the ANTI-TARGETS or has no visible Inbound strategy, it's a NO_GO. If they are in the target audience (B2B with inbound), it's a GO.\n\nStep 2: Deduce a compatibility score out of 100 with the [YOUR COMPANY NAME] offer. \nWARNING: This score is calculated ONLY if the decision is GO. If it's a NO_GO, the score must be 0.\n\nProgressive scoring rules (only for a GO):\n- Lead generation maturity (0 to 30 points): 30 pts for complex forms/Calendly/Audit. 15 pts for a simple classic contact form. 0 pt if very vague.\n- Evidence of High-Ticket sales (0 to 30 points): 30 pts for mention of high prices, premium or custom services. 15 pts for classic B2B. 0 pt if low-ticket is suspected.\n- Commercial volume or urgency (0 to 20 points): 20 pts for very insistent calls to action (book a demo now, limited spots). 10 pts for passive CTAs.\n- Decision-maker target (0 to 20 points): 20 pts if the text clearly addresses executives/CEOs/sales teams. 10 pts if it is for individual employees.\nMaximum score = 100. When in doubt, always choose the intermediate or low score for the category.\n\nGenerate a valid JSON object with the following exact structure:\n\n{\n  \"company_name\": \"Company name or Unknown\",\n  \"industry\": \"E.g., SEO Agency, HR Software, Coaching...\",\n  \"client_type\": \"B2B, B2C, or Mixed\",\n  \"evidence_of_lead_gen\": true,\n  \"financial_capacity_compatible\": true,\n  \"go_no_go_decision\": \"GO or NO_GO\",\n  \"scoring_details\": \"For each criterion, give the assigned points. E.g., Lead Gen (15/30) + High Ticket (30/30) + Urgency (10/20) + Target (20/20)\",\n  \"qualification_score\": 75,\n  \"short_justification\": \"Explanation in 2 sentences max\",\n  \"factual_observation\": \"A single purely descriptive sentence of what was spotted on the site.\"\n}"
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "You are the B2B qualification expert (Lead Gen & RevOps) of the [YOUR COMPANY NAME] agency. OUR OFFER ([YOUR COMPANY NAME]): We install \"Speed-to-Lead\" revenue infrastructures for companies. Our system intercepts incoming leads (forms, emails), qualifies them via AI, responds in less than 90 seconds, updates the CRM (regardless of their CRM), and sends an SMS to closers for VIP leads if necessary. Our offer costs a minimum of [YOUR HIGH-TICKET PRICE] for the first year. OUR IDEAL TARGET (ICP): * Industries: Marketing Agencies, B2B Coaching, Info-product Sales, B2B SaaS, Scale-ups. * Model: High-Ticket Sales (they sell expensive services or products, so every lost lead costs them dearly). * Mandatory criterion: They MUST have a visible Inbound acquisition strategy (presence of complex forms, Calendly appointment booking, Lead Magnet downloads, \"Request a demo\" buttons). ANTI-TARGETS (TO REJECT - NO_GO): * Classic local businesses without high volume (bakery, small craftsman). * Low average order value B2C e-commerce (dropshipping, clothing). * Showcase companies without any call to action (no form, no capture strategy). YOUR MISSION: You will analyze the raw text extracted from a prospect's website. You must act in an analytical and cold manner. You must determine if this company has the profile (and the means) to buy our infrastructure, first by defining a GO or NO_GO status, then by scoring out of 100 only those qualified. You will reply ONLY and STRICTLY in the requested JSON format.",
+          "temperature": 0
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -1152,
+        176
+      ],
+      "id": "e12a2c2e-fadb-49cf-9fc8-01325731504d",
+      "name": "Gemini Qualification",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 5,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "for (let item of $input.all()) {\n  // 1. Text extraction\n  let rawText = item.json?.content?.parts?.[0]?.text || item.json.text || item.json.message?.content || \"{}\";\n  \n  // 2. Tag cleaning\n  let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n  \n  try {\n    let parsedData = JSON.parse(cleanText);\n    \n    // NEW: Check if the key exists, otherwise throw an error\n    if (!parsedData.go_no_go_decision) {\n        throw new Error(\"AI did not return a GO/NO_GO decision\");\n    }\n    \n    // NEW: Force uppercase and trim spaces to avoid Switch bugs\n    parsedData.go_no_go_decision = parsedData.go_no_go_decision.trim().toUpperCase();\n    \n    item.json.ai_data = parsedData;\n    \n  } catch (error) { \n    // In case of parsing error or missing decision, fallback to AI_ERROR\n    item.json.ai_data = { \n        go_no_go_decision: \"AI_ERROR\", \n        short_justification: \"AI formatting or response error\", \n        qualification_score: 0 \n    };\n  }\n}\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -800,
+        64
+      ],
+      "id": "55269a49-aa13-42bb-b2c8-3fd0900649fb",
+      "name": "Parse AI Response"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.ai_data.go_no_go_decision }}",
+                    "rightValue": "=GO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "80d1dba3-1e42-4667-89ba-3e5155ce8d0e"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "=Qualified"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "eb4c4048-dfbc-48e9-a449-a98c48276b43",
+                    "leftValue": "={{ $json.ai_data.go_no_go_decision }}",
+                    "rightValue": "NO_GO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Disqualified"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "801f92d0-27ef-41c7-ad5d-076510f5f8ac",
+                    "leftValue": "={{ $json.ai_data.go_no_go_decision }}",
+                    "rightValue": "AI_ERROR",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "AI Error"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -576,
+        32
+      ],
+      "id": "17434a6a-4898-41c4-b17b-edc867ba3a15",
+      "name": "Route Qualification"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Lead').first().json.Id }}"
+            },
+            {
+              "fieldName": "=Statut",
+              "fieldValue": "Qualifié"
+            },
+            {
+              "fieldName": "Site scrapé",
+              "fieldValue": "={{ $json.ai_data.short_justification }}"
+            },
+            {
+              "fieldName": "Observation factuelle",
+              "fieldValue": "={{ $json.ai_data.factual_observation }}"
+            },
+            {
+              "fieldName": "Justification Qualification",
+              "fieldValue": "={{ $('Parse AI Response').item.json.ai_data.short_justification }}"
+            },
+            {
+              "fieldName": "=Score via site",
+              "fieldValue": "={{ $json.ai_data.qualification_score }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -128,
+        -144
+      ],
+      "id": "cac58d87-0b8c-4f2a-b3b4-71230ca46b8a",
+      "name": "Update Status Qualified",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Lead').first().json.Id }}"
+            },
+            {
+              "fieldName": "=Statut",
+              "fieldValue": "Disqualifié"
+            },
+            {
+              "fieldName": "Site scrapé",
+              "fieldValue": "={{ $json.ai_data.short_justification }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -352,
+        144
+      ],
+      "id": "cf420b72-f910-41d2-8277-3080acd20c3f",
+      "name": "Update Status Disqualified",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (let item of $input.all()) {\n  // 1. Get raw HTML generated by the Browserless node\n  let rawHtml = item.json.data?.[0]?.results?.[0]?.html || \"\";\n  \n  // 2. Clean HTML to keep only useful text for AI\n  // Remove scripts and CSS\n  let cleanText = rawHtml.replace(/<script[^>]*>[\\s\\S]*?<\\/script>/gi, ' ');\n  cleanText = cleanText.replace(/<style[^>]*>[\\s\\S]*?<\\/style>/gi, ' ');\n  \n  // Remove all other HTML tags\n  cleanText = cleanText.replace(/<[^>]+>/g, ' ');\n  \n  // Clean extra spaces\n  cleanText = cleanText.replace(/\\s+/g, ' ').trim();\n  \n  // 3. Create the variable that Gemini expects\n  item.json.clean_text = cleanText;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1376,
+        176
+      ],
+      "id": "4fc72a14-90c7-4bb9-ad06-1b81b6f86f94",
+      "name": "Parse Scraper Output"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Scraping en cours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2272,
+        464
+      ],
+      "id": "e44d682e-d183-4806-af22-a044e66e439c",
+      "name": "Update Status Scraping",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Lead').first().json.Id }}"
+            },
+            {
+              "fieldName": "=Statut",
+              "fieldValue": "Erreur IA"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -352,
+        336
+      ],
+      "id": "28856617-553d-41fe-8789-66ae0d535e38",
+      "name": "Update Status AI Error",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f564d83b-0f92-4741-a959-a0647326e86b",
+              "leftValue": "={{ $json.ai_data.qualification_score }}",
+              "rightValue": 90,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -352,
+        -48
+      ],
+      "id": "1983fe02-e9a8-4b3f-8f23-189dc09bffc3",
+      "name": "Check VIP Score"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Lead').first().json.Id }}"
+            },
+            {
+              "fieldName": "=Statut",
+              "fieldValue": "VIP à chauffer"
+            },
+            {
+              "fieldName": "Site scrapé",
+              "fieldValue": "={{ $json.ai_data.short_justification }}"
+            },
+            {
+              "fieldName": "Observation factuelle",
+              "fieldValue": "={{ $json.ai_data.factual_observation }}"
+            },
+            {
+              "fieldName": "Justification Qualification",
+              "fieldValue": "={{ $('Parse AI Response').item.json.ai_data.short_justification }}"
+            },
+            {
+              "fieldName": "=Score via site",
+              "fieldValue": "={{ $json.ai_data.qualification_score }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -128,
+        48
+      ],
+      "id": "ef577b10-df3c-4539-a2d5-a00b2cd1a230",
+      "name": "Update Status VIP",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Lead": {
+      "main": [
+        [
+          {
+            "node": "Update Status Scraping",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Website": {
+      "main": [
+        [
+          {
+            "node": "Scrape Website",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status No Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Scrape Website": {
+      "main": [
+        [
+          {
+            "node": "Is Scraping Successful",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status Scraping Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Scraping Successful": {
+      "main": [
+        [
+          {
+            "node": "Parse Scraper Output",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status Scraping Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini Qualification": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status AI Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Route Qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Qualification": {
+      "main": [
+        [
+          {
+            "node": "Check VIP Score",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status Disqualified",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status AI Error",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status AI Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Scraper Output": {
+      "main": [
+        [
+          {
+            "node": "Gemini Qualification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status Scraping": {
+      "main": [
+        [
+          {
+            "node": "Check Website",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check VIP Score": {
+      "main": [
+        [
+          {
+            "node": "Update Status VIP",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Status Qualified",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {
+    "Schedule Trigger": [
+      {
+        "timestamp": "2026-04-13T19:36:40.003+02:00",
+        "Readable date": "April 13th 2026, 7:36:40 pm",
+        "Readable time": "7:36:40 pm",
+        "Day of week": "Monday",
+        "Year": "2026",
+        "Month": "April",
+        "Day of month": "13",
+        "Hour": "19",
+        "Minute": "36",
+        "Second": "40",
+        "Timezone": "Europe/Paris (UTC+02:00)"
+      }
+    ]
+  },
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a112fddf3ffd3951af3f038489902a0932fdd00ab2603bd8286c6079838b242c"
+  }
+}

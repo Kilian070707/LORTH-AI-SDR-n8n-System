@@ -1,0 +1,1064 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email1@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "64f68654-1e3d-4d07-937d-39eb4927ef9f"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email1@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b11f1112-f499-4cfe-ace9-7377b20ff163",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email2@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email2@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0ee9e919-0b40-4e37-a96d-7b7ec79da873",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email3@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email3@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "20255aad-cf58-4b28-80af-d5ac31d2c1f8",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email4@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email4@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "ca565756-2da1-4c97-8895-2fea8db55bee",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email5@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email5@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "7b2c2915-90d8-4930-8ee0-152a07b0119b",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email6@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email6@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "add-7",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email7@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email7@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "add-8",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email8@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email8@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "add-9",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email9@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email9@yourdomain.com"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "add-10",
+                    "leftValue": "={{ $json.body.fromEmail }}",
+                    "rightValue": "email10@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "email10@yourdomain.com"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        656
+      ],
+      "id": "60ae1991-a3b9-48d9-9ed9-51d71078990b",
+      "name": "Sort Mailboxes"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "unibox-send",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        608,
+        720
+      ],
+      "id": "5bafd5b0-bf95-45ea-ab34-b596d7a14382",
+      "name": "Trigger",
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email1@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        240
+      ],
+      "id": "f5481020-ff38-4bd4-b9d0-852375e3d82a",
+      "name": "Mailbox 1",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email5@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email2@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        432
+      ],
+      "id": "ca906465-d557-4666-bffc-540c6e4393b9",
+      "name": "Mailbox 2",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email1@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email3@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        624
+      ],
+      "id": "53891e0d-3f9b-4267-abbd-e425bbeb1747",
+      "name": "Mailbox 3",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email3@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email4@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        816
+      ],
+      "id": "dd3da926-beff-4024-b606-7dfb7962398c",
+      "name": "Mailbox 4",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email10@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email5@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        1008
+      ],
+      "id": "6470b5a8-12a4-465a-be0a-45358bfac583",
+      "name": "Mailbox 5",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email4@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email6@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        1200
+      ],
+      "id": "ea2b9b5f-b7f3-4aab-8b5d-ad6c7a75a4c8",
+      "name": "Mailbox 6",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email2@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email7@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        1392
+      ],
+      "id": "4ab20548-63b3-4725-9858-631272e14c28",
+      "name": "Mailbox 7",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email6@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email8@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        1584
+      ],
+      "id": "14a938e0-b609-4a13-89e7-53a19e479050",
+      "name": "Mailbox 8",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email7@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email9@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        1776
+      ],
+      "id": "a28a0403-5065-4fd2-83fe-a1e1f4e3c5eb",
+      "name": "Mailbox 9",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email8@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email10@yourdomain.com>",
+        "toEmail": "={{ $('Trigger').item.json.body.toEmail }}",
+        "subject": "={{ $('Trigger').item.json.body.subject }}",
+        "html": "={{ $('Trigger').item.json.body.message }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1056,
+        1968
+      ],
+      "id": "9ad53932-f6bc-4721-803d-f3b95ab09c9a",
+      "name": "Mailbox 10",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email9@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        240
+      ],
+      "id": "2b08e1c6-8e67-467a-aeb4-7d4dd2e43b90",
+      "name": "Update Last Message Date 1",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        432
+      ],
+      "id": "67efdd5b-ea1e-4d91-89ce-841060597ccc",
+      "name": "Update Last Message Date 2",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        624
+      ],
+      "id": "dfdb05f8-69a3-4a4f-ad63-eab77637f227",
+      "name": "Update Last Message Date 3",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        816
+      ],
+      "id": "6dab8ef7-2e6a-4820-8d34-0d37d9c94961",
+      "name": "Update Last Message Date 4",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1008
+      ],
+      "id": "9bca4d8d-b775-41f8-9703-73866019b1f1",
+      "name": "Update Last Message Date 5",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1200
+      ],
+      "id": "348eafd5-7a31-475e-9083-d2ecd111350a",
+      "name": "Update Last Message Date 6",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1392
+      ],
+      "id": "76d86248-d767-4a85-9d6d-118a8d56631a",
+      "name": "Update Last Message Date 7",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1584
+      ],
+      "id": "fd5770f8-1855-40cb-8da9-279f1514f095",
+      "name": "Update Last Message Date 8",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1776
+      ],
+      "id": "b6286426-f080-4c0d-aa67-903dac52df30",
+      "name": "Update Last Message Date 9",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Trigger').item.json.body.leadId }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1280,
+        1968
+      ],
+      "id": "beafa72c-eb8f-474a-96dd-44f98b34495e",
+      "name": "Update Last Message Date 10",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Sort Mailboxes": {
+      "main": [
+        [
+          {
+            "node": "Mailbox 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailbox 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger": {
+      "main": [
+        [
+          {
+            "node": "Sort Mailboxes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 1": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 2": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 3": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 4": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 5": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 6": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 7": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 8": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 9": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 10": {
+      "main": [
+        [
+          {
+            "node": "Update Last Message Date 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a112fddf3ffd3951af3f038489902a0932fdd00ab2603bd8286c6079838b242c"
+  }
+}

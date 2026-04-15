@@ -1,0 +1,136 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1438c259-dce2-4ebe-ad21-f17ce063b7b7",
+      "name": "Trigger at 8:00"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "returnAll": true,
+        "options": {
+          "where": "={Statut} = 'En chauffe LinkedIn'"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        208,
+        0
+      ],
+      "id": "0cab47db-5df6-4c59-996d-334198290cfe",
+      "name": "Fetch VIPs",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const result = [];\nconst now = new Date();\n\nfor (const item of $input.all()) {\n  const dateAddedStr = item.json.Date_Ajout_LinkedIn;\n  \n  if (dateAddedStr) {\n    const dateAdded = new Date(dateAddedStr);\n    // Calculate difference in hours\n    const diffHours = (now - dateAdded) / (1000 * 60 * 60);\n    \n    // If more than 48h, keep lead for the next step\n    if (diffHours >= 48) {\n      result.push(item);\n    }\n  }\n}\nreturn result;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "b1e3445f-5021-4ad3-9bf2-8c34cf8f1f19",
+      "name": "48h Filter"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "VIP Prêt pour l'IA"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        624,
+        0
+      ],
+      "id": "3151aaa0-783e-4587-b8b3-9175e28025b7",
+      "name": "Update VIPs",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Trigger at 8:00": {
+      "main": [
+        [
+          {
+            "node": "Fetch VIPs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch VIPs": {
+      "main": [
+        [
+          {
+            "node": "48h Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "48h Filter": {
+      "main": [
+        [
+          {
+            "node": "Update VIPs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a112fddf3ffd3951af3f038489902a0932fdd00ab2603bd8286c6079838b242c"
+  }
+}

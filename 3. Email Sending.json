@@ -1,0 +1,1494 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.Id }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "id": "63742a85-a3f6-4a0c-8587-2af1830bcfcc",
+      "name": "Check if Lead Found",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        1872
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const staticData = $getWorkflowStaticData('global');\nstaticData.counter = staticData.counter || 1;\n\nconst mailboxNumber = staticData.counter;\nstaticData.counter = staticData.counter >= 10 ? 1 : staticData.counter + 1;\n\nreturn {\n  json: {\n    ...$input.item.json,\n    mailbox_to_use: mailboxNumber.toString()\n  }\n};"
+      },
+      "id": "5c10717e-ad47-452f-afbd-e8095129aa3a",
+      "name": "Mailbox Rotation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        1776
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "1",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "daabfeb0-7b3b-42d7-ae4b-9a01f461c6d4"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "43010b9f-c979-4d35-bb6f-05e27beb089f",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "2",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b870ac15-5f49-47cb-8c71-aec16190a892",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "3",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 3"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "24978615-4b95-489f-8dba-a3c8b7051b91",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "4",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "896523be-611c-4b32-9a8b-59f94af3139d",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "5",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 5"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "bdd2ce6b-d1c1-434a-aede-f9b7df8d4352",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "6",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 6"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "custom-id-boite-7",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "7",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "custom-id-boite-8",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "8",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 8"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "custom-id-boite-9",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "9",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 9"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "custom-id-boite-10",
+                    "leftValue": "={{ $json.mailbox_to_use }}",
+                    "rightValue": "10",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        944,
+        1648
+      ],
+      "id": "64752fe6-5d8f-4555-9428-fac02d3159a5",
+      "name": "Route Mailboxes"
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email1@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "afdb2721-61c4-4a4f-b079-4ab7600dae57",
+      "name": "Send via Mailbox 3",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        1296
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email1@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email2@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "cc92e8e6-4e6b-4e82-b90e-1003e9b7c032",
+      "name": "Send via Mailbox 4",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        1488
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email2@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        1968
+      ],
+      "id": "20eacaff-6b26-43c2-9843-b66a93c12466",
+      "name": "Stop Workflow"
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email3@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "5a3ed29b-8e70-42b7-a82c-c5c7af5d8f36",
+      "name": "Send via Mailbox 2",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        1104
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email3@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email4@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "63bce46b-5591-4d54-bc63-94a109b54f99",
+      "name": "Send via Mailbox 1",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        912
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email2@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "limit": 1,
+        "options": {
+          "sort": {
+            "property": [
+              {
+                "field": "Statut",
+                "direction": "desc"
+              },
+              {
+                "field": "Score via site",
+                "direction": "desc"
+              }
+            ]
+          },
+          "where": "=(Statut,eq,Mail prêt)~or(Statut,eq,Relance 1 prête)~or(Statut,eq,Relance 2 prête)"
+        }
+      },
+      "id": "b1f1ec6d-4d62-45ed-a7b8-0d3fe7f9514b",
+      "name": "Fetch Pending Emails",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -624,
+        1872
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Envoi en cours"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        272,
+        1776
+      ],
+      "id": "b9cb3e9d-9005-4d75-9fd8-e0ec6667ce2d",
+      "name": "Update Status Sending",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email5@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "e01f2faa-359f-4006-97cd-d44a4d7f26d7",
+      "name": "Send via Mailbox 5",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        1680
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email4@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email6@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "498d36be-c0a8-4544-8070-cef05cc1a40d",
+      "name": "Send via Mailbox 6",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        1872
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email5@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email7@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b83208d3-0dcc-4b96-b3bc-bbd0afad56d6",
+      "name": "Send via Mailbox 7",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        2064
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email6@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email8@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "b2299b74-59a7-428b-9c26-6bd9d6248985",
+      "name": "Send via Mailbox 8",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        2256
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email7@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email9@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "33c11f2d-06d5-4f14-84ee-7aa3dec6269d",
+      "name": "Send via Mailbox 9",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        2448
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email8@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email10@yourdomain.com>",
+        "toEmail": "={{ $('Fetch Pending Emails').item.json.Email }}",
+        "subject": "={{ $('Prepare Text').item.json.subject }}",
+        "emailFormat": "text",
+        "text": "={{ $('Prepare Text').item.json.message }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d3ca1c54-a1b4-41c2-a6cb-ea35ae1a0f95",
+      "name": "Send via Mailbox 10",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        1168,
+        2640
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email9@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email8@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "543f5a60-bbda-43b8-b7ba-43aa1bb22970",
+      "name": "Update CRM Mailbox 8",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        2256
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "a18039e8-00f9-4d89-a4b5-75580c92f7ac",
+              "leftValue": "={{ $json.subject }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "e7688081-07e7-4ea1-b2ec-2d0b907f67cf",
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        48,
+        1776
+      ],
+      "id": "16490983-0b25-474a-890c-e6ad0103dd49",
+      "name": "Check Generated Text"
+    },
+    {
+      "parameters": {
+        "amount": "={{ Math.floor(Math.random() * (120 - 15 + 1)) + 15 }}"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        496,
+        1776
+      ],
+      "id": "eaa53996-3687-4c23-99d3-0086d924337a",
+      "name": "Human Timing",
+      "webhookId": "YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "jsCode": "const originalData = $input.item.json;\nconst originalStatus = originalData[\"Statut\"];\n\nlet emailSubject = \"\";\nlet emailBody = \"\";\nlet newStatus = \"\";\n\nif (originalStatus === \"Mail prêt\") {\n  emailSubject = originalData[\"Objet d'outreach\"] || \"\";\n  emailBody = originalData[\"Mail d'outreach\"] || \"\";\n  newStatus = \"Mail envoyé\";\n} else if (originalStatus === \"Relance 1 prête\") {\n  emailSubject = originalData[\"Objet relance 1\"] || \"\";\n  emailBody = originalData[\"Mail relance 1\"] || \"\";\n  newStatus = \"Relance 1 envoyée\";\n} else if (originalStatus === \"Relance 2 prête\") {\n  emailSubject = originalData[\"Objet relance 2\"] || \"\";\n  emailBody = originalData[\"Mail relance 2\"] || \"\";\n  newStatus = \"Relance 2 envoyée\";\n}\n\nreturn {\n  json: {\n    ...originalData,\n    subject: emailSubject,\n    message: emailBody,\n    status_after_send: newStatus\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -176,
+        1776
+      ],
+      "id": "056737ea-2f3e-47f3-a183-d3df2ea1b77d",
+      "name": "Prepare Text"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email9@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "221bffd0-ae9c-4174-b537-fcf0ad09ad6c",
+      "name": "Update CRM Mailbox 9",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        2448
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email10@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "c8c95fdb-5c16-422f-a76a-9d2a3212fce7",
+      "name": "Update CRM Mailbox 10",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        2640
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email7@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "a2bc7ed9-495e-4a6e-be8f-d2ab7fc1b774",
+      "name": "Update CRM Mailbox 7",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        2064
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email6@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "0b7c06ad-2490-420d-b4bb-7b54bbf02e9b",
+      "name": "Update CRM Mailbox 6",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        1872
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email5@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "281f103e-4538-4447-b70f-1f19520401f4",
+      "name": "Update CRM Mailbox 5",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        1680
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email2@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "a0eddf37-6aec-4f8d-86f4-edd2e0873e31",
+      "name": "Update CRM Mailbox 4",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        1488
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email1@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "71f9c672-b63a-43e1-9425-44e42680ef61",
+      "name": "Update CRM Mailbox 3",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        1296
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email3@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "c5d09a7a-570f-40b6-b3cc-80b92af34d26",
+      "name": "Update CRM Mailbox 2",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        1104
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Pending Emails').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "={{ $('Prepare Text').item.json.status_after_send }}"
+            },
+            {
+              "fieldName": "Date d'envoi du 1er cold email",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Mail utilisé pour l'envoi",
+              "fieldValue": "email4@yourdomain.com"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "id": "9391e498-31a3-47a4-b732-b558765f1010",
+      "name": "Update CRM Mailbox 1",
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1392,
+        912
+      ],
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/2 9-16 * * 1-5"
+            }
+          ]
+        }
+      },
+      "id": "b2ef5617-6cff-447f-a728-9052ce0f9401",
+      "name": "Trigger Every 2m (Work Hours)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -848,
+        1872
+      ]
+    }
+  ],
+  "connections": {
+    "Check if Lead Found": {
+      "main": [
+        [
+          {
+            "node": "Prepare Text",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox Rotation": {
+      "main": [
+        [
+          {
+            "node": "Route Mailboxes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route Mailboxes": {
+      "main": [
+        [
+          {
+            "node": "Send via Mailbox 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 3": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 4": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 2": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 1": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Pending Emails": {
+      "main": [
+        [
+          {
+            "node": "Check if Lead Found",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Status Sending": {
+      "main": [
+        [
+          {
+            "node": "Human Timing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 5": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 6": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 7": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 7",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 8": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 8",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 9": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 9",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send via Mailbox 10": {
+      "main": [
+        [
+          {
+            "node": "Update CRM Mailbox 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Generated Text": {
+      "main": [
+        [
+          {
+            "node": "Update Status Sending",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Human Timing": {
+      "main": [
+        [
+          {
+            "node": "Mailbox Rotation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Text": {
+      "main": [
+        [
+          {
+            "node": "Check Generated Text",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Every 2m (Work Hours)": {
+      "main": [
+        [
+          {
+            "node": "Fetch Pending Emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a112fddf3ffd3951af3f038489902a0932fdd00ab2603bd8286c6079838b242c"
+  }
+}

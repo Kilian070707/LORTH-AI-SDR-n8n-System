@@ -1,0 +1,2371 @@
+{
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4288,
+        1392
+      ],
+      "id": "957e3a8c-127e-4a26-ac8a-6894527b24d4",
+      "name": "Stop Workflow 3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -1472,
+        1264
+      ],
+      "id": "24c29767-4f84-40cb-bbb9-b43068cb829f",
+      "name": "Stop Workflow 4"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4000,
+        1104
+      ],
+      "id": "cd7d295f-feb2-4eba-a84e-83a562d26fe7",
+      "name": "Stop Workflow 1"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        -4000,
+        912
+      ],
+      "id": "8fac9dd1-f5c2-4c11-ac38-f1eef18673e8",
+      "name": "Stop Workflow"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Bounced"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -4000,
+        720
+      ],
+      "id": "29f91fd4-39ef-413c-96b2-c1dd95ad1acc",
+      "name": "Status Bounced",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.Id }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -4288,
+        816
+      ],
+      "id": "535b82a7-7132-4d7c-b400-96bea22a7337",
+      "name": "Lead Found (Bounce)?"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "limit": 1,
+        "options": {
+          "where": "=(Email,eq,{{ $json.bounced_email_found }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -4512,
+        816
+      ],
+      "id": "a1ccc153-ea4a-4c23-a9b2-3f1f090cc107",
+      "name": "Find Bounced Lead",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get the full text of the return email\nconst emailBody = $input.item.json.email_body;\n\n// Regex to find all email addresses in the text\nconst emailRegex = /[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}/g;\nconst foundEmails = emailBody.match(emailRegex) || [];\n\n// Filter out your own sending addresses and robot addresses\nlet bouncedEmail = \"\";\nconst excludedDomains = [\n  \"yourdomain.com\",\n  \"googlemail.com\", \n  \"google.com\"\n];\n\nfor (let email of foundEmails) {\n    email = email.toLowerCase();\n    let isExcluded = excludedDomains.some(domain => email.includes(domain));\n    if (!isExcluded) {\n        bouncedEmail = email;\n        break; // Take the first found address that is not yours\n    }\n}\n\nreturn {\n  json: {\n    ...$input.item.json,\n    bounced_email_found: bouncedEmail\n  }\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -4736,
+        816
+      ],
+      "id": "94448b16-14b8-4ed9-892a-a0445d15cc0b",
+      "name": "Extract Dead Email"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "e9b41b9c-8f11-4089-a790-2e4242e2fb85",
+              "leftValue": "={{ $json.sender_email }}",
+              "rightValue": "daemon",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "1b9a9d70-36a5-485f-8461-1fc45b0a3c56",
+              "leftValue": "={{ $json.sender_email }}",
+              "rightValue": "postmaster",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "bounce_word_1",
+              "leftValue": "={{ $json.email_subject }}",
+              "rightValue": "undelivered",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "bounce_word_2",
+              "leftValue": "={{ $json.email_subject }}",
+              "rightValue": "delivery status",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -4960,
+        1104
+      ],
+      "id": "3aec8c90-8a88-41e9-ad88-20aa8028a188",
+      "name": "Is it a Bounce?"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Find Lead NocoDB').item.json.Id }}"
+            },
+            {
+              "fieldName": "Discord Thread ID",
+              "fieldValue": "={{ $json.id }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2592,
+        1392
+      ],
+      "id": "a78be0fc-939f-4041-a6dd-f74ff9cae0e0",
+      "name": "Update Discord ID",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://discord.com/api/v10/channels/{{ $json.channel_id }}/messages/{{ $json.id }}/threads",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "Bot YOUR_DISCORD_TOKEN"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"name\": \"{{ $('Find Lead NocoDB').item.json.Statut === 'Objection traitée' ? '📂🔄 Conversation to reply' : '📂🆕 New lead to reply' }} | {{ $('Find Lead NocoDB').item.json['Company Name'] }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -2816,
+        1392
+      ],
+      "id": "04922e22-bc3c-49dc-90ad-106e3e86cd13",
+      "name": "No - Discord Info 2"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "YOUR_GUILD_ID",
+          "mode": "list",
+          "cachedResultName": "[YOUR COMPANY NAME]",
+          "cachedResultUrl": "https://discord.com/channels/YOUR_GUILD_ID"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.discord_channel }}",
+          "mode": "id"
+        },
+        "content": "=🚨 <@YOUR_DISCORD_USER_ID> **ACTION REQUIRED!**\n👤 **Client:** {{ $('Find Lead NocoDB').item.json['First Name'] }} ({{ $('Find Lead NocoDB').item.json['Company Name'] }})\n✉️ **Email:** {{ $('Extract Data').item.json.sender_email }}\n🕒 **Date:** {{ $now.toFormat('dd/MM/yyyy HH:mm') }}\n🤖 **AI Analysis:** {{ $json.intent_data.intent }} - {{ $json.intent_data.explanation }}\n\n💬 **Message:**\n> {{ $('Extract Data').item.json.email_body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -3040,
+        1392
+      ],
+      "id": "ba7a2a30-3897-4055-a0cf-08ee94174429",
+      "name": "No - Discord Info 1",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "discordBotApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Discord Bot YOUR_DISCORD_TOKEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "value": "YOUR_GUILD_ID",
+          "mode": "list",
+          "cachedResultName": "[YOUR COMPANY NAME]",
+          "cachedResultUrl": "https://discord.com/channels/YOUR_GUILD_ID"
+        },
+        "channelId": {
+          "__rl": true,
+          "value": "={{ $json.discord_channel }}",
+          "mode": "id"
+        },
+        "content": "=📝 **AUTOMATIC LOG**\n👤 **Client:** {{ $('Find Lead NocoDB').item.json['First Name'] }} {{ $('Find Lead NocoDB').item.json['Last Name'] }} ({{ $('Find Lead NocoDB').item.json['Company Name'] }})\n✉️ **Email:** {{ $('Extract Data').item.json.sender_email }}\n🕒 **Date:** {{ $now.toFormat('dd/MM/yyyy HH:mm') }}\n🤖 **AI Decision:** {{ $json.intent_data.intent }} (No action required)\n\n💬 **Message:**\n> {{ $('Extract Data').item.json.email_body }}",
+        "options": {},
+        "files": {
+          "values": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.discord",
+      "typeVersion": 2,
+      "position": [
+        -2592,
+        1584
+      ],
+      "id": "181867fe-26f6-4308-9970-0abeda0069fa",
+      "name": "Yes - Discord Info",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "discordBotApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Discord Bot YOUR_DISCORD_TOKEN"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "90b491a5-f330-43a3-8ed0-2ed15163a660",
+              "leftValue": "={{ $json.intent_data.intent }}",
+              "rightValue": "QUESTION",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "2496e399-2a1b-49c5-bb7e-2ab9e81dec98",
+              "leftValue": "={{ $json.intent_data.intent }}",
+              "rightValue": "OBJECTION",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -3264,
+        1488
+      ],
+      "id": "f09240cb-5d33-4263-88cc-96a82c8bd234",
+      "name": "AI Response?"
+    },
+    {
+      "parameters": {
+        "jsCode": "const email_rec = $('Extract Data').item.json.recipient_email;\nlet channel_id = \"\";\n\n// Add routing logic for your emails\n// Just setting dummy channel IDs\nchannel_id = \"YOUR_CHANNEL_ID\";\n\n$input.item.json.discord_channel = channel_id;\nreturn $input.item;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3488,
+        1488
+      ],
+      "id": "2b94cbf4-a174-47f6-86a4-a1838bf4ee90",
+      "name": "Code for Discord"
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email1@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        1232
+      ],
+      "id": "e126ef7a-57e7-487b-a6a3-72d0081d3984",
+      "name": "Reply 6",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email2@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email3@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        1040
+      ],
+      "id": "dc69d50a-4bba-4dd6-92eb-a06b5e71c1d0",
+      "name": "Reply 5",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email4@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        1200
+      ],
+      "id": "477b913d-9305-480d-9af9-21b9d0f81cb1",
+      "name": "Mailbox 6",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email2@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        1008
+      ],
+      "id": "a1b3d862-b858-48fe-a73f-3df7eb8f0de3",
+      "name": "Mailbox 5",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email4@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Parse Intent').item.json.intent_data.intent }}",
+                    "rightValue": "POSITIVE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "pos"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Positive"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "question",
+                    "leftValue": "={{ $('Parse Intent').item.json.intent_data.intent }}",
+                    "rightValue": "QUESTION",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Question"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "obj",
+                    "leftValue": "={{ $('Parse Intent').item.json.intent_data.intent }}",
+                    "rightValue": "OBJECTION",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Objection"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "neg",
+                    "leftValue": "={{ $('Parse Intent').item.json.intent_data.intent }}",
+                    "rightValue": "NEGATIVE",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Negative"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "absent",
+                    "leftValue": "={{ $('Parse Intent').item.json.intent_data.intent }}",
+                    "rightValue": "ABSENT",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Absent"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -2368,
+        1440
+      ],
+      "id": "8a86c73d-a56f-4aa1-9199-00acef3c8859",
+      "name": "Sort Responses"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Find Lead NocoDB').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Question à traiter"
+            },
+            {
+              "fieldName": "Dernière réponse reçue",
+              "fieldValue": "={{ $('Extract Data').item.json.email_body }}"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Type Objection",
+              "fieldValue": "={{ $json.intent_data.objection_type }}"
+            },
+            {
+              "fieldName": "Brouillon IA",
+              "fieldValue": "={{ $json.intent_data.draft }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2144,
+        1296
+      ],
+      "id": "1c088056-cb3d-49fa-afb7-942e45f66ff3",
+      "name": "Status: Question",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Find Lead NocoDB').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Objection à traiter"
+            },
+            {
+              "fieldName": "Dernière réponse reçue",
+              "fieldValue": "={{ $('Extract Data').item.json.email_body }}"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Brouillon IA",
+              "fieldValue": "={{ $json.intent_data.draft }}"
+            },
+            {
+              "fieldName": "Type Objection",
+              "fieldValue": "={{ $json.intent_data.objection_type }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2144,
+        1488
+      ],
+      "id": "382ae441-00bf-412b-933a-f5100a5d768d",
+      "name": "Status: Objection",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Find Lead NocoDB').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Désinscrit"
+            },
+            {
+              "fieldName": "Dernière réponse reçue",
+              "fieldValue": "={{ $('Extract Data').item.json.email_body }}"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Type Objection",
+              "fieldValue": "={{ $json.intent_data.objection_type }}"
+            },
+            {
+              "fieldName": "Brouillon IA",
+              "fieldValue": "={{ $json.intent_data.draft }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2144,
+        1680
+      ],
+      "id": "ba334d95-98bc-4a73-879e-8dbeba14d5a5",
+      "name": "Status: Unsubscribed",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Find Lead NocoDB').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "En congés"
+            },
+            {
+              "fieldName": "Dernière réponse reçue",
+              "fieldValue": "={{ $('Extract Data').item.json.email_body }}"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Brouillon IA ",
+              "fieldValue": "={{ $json.intent_data.draft }}"
+            },
+            {
+              "fieldName": "Type Objection",
+              "fieldValue": "={{ $json.intent_data.objection_type }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2144,
+        1872
+      ],
+      "id": "11447c7f-b422-406b-b3e2-55e52f19fe91",
+      "name": "Status: Absent",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email5@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        656
+      ],
+      "id": "c834cbda-d888-421c-939c-54955ccbbb5d",
+      "name": "Reply 4",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email6@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email7@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        464
+      ],
+      "id": "c1e06da7-c493-4d57-91a2-8dceb3fa519b",
+      "name": "Reply 3",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email8@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email9@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        272
+      ],
+      "id": "b480af98-f1c0-496b-8eb7-156f7586651b",
+      "name": "Reply 2",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email10@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email11@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        80
+      ],
+      "id": "7c962356-5279-46cc-981f-389bba67d0b8",
+      "name": "Reply 1",
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email12@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email11@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f7310121-f51c-4022-a052-198f05acf9b0"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 1"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "de60bd4a-faa3-4683-8686-e070e2d36f8f",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email9@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 2"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "8ba0ba1e-9363-48bb-998c-6840ecc894a0",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email1@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 3"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "1e74471d-ac7c-4234-97c8-829d6adb454b",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email5@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 4"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "cd03b51d-d5eb-4dd6-bd8e-7b1d271a0dec",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email7@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 5"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "359d81ed-f31a-44cc-bac8-a1c3d217dae0",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email3@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 6"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "e2ba5956-195c-48c2-bd30-4860fbc2331d",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email13@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 7"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "b1d244e2-9513-4326-a575-6aeab5bed5cd",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email14@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 8"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "82d61b00-0d69-42c5-98df-616017b0dafb",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email15@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 9"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "162dd29d-3315-47ac-9748-75f42305d000",
+                    "leftValue": "={{ $('Extract Data').item.json.recipient_email }}",
+                    "rightValue": "email16@yourdomain.com",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Mailbox 10"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        -1472,
+        816
+      ],
+      "id": "98cbfb2d-e124-47d8-abe3-d12a9c7f13a0",
+      "name": "Switch Inbox"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Mail envoyé"
+            },
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Relance 1 envoyée"
+            },
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Relance 2 envoyée"
+            }
+          ]
+        },
+        "combineOperation": "any"
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -1696,
+        1104
+      ],
+      "id": "a19e4e3b-14ad-4da4-a310-8757dcd6c565",
+      "name": "1st Response?"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Find Lead NocoDB').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Vidéo à tourner"
+            },
+            {
+              "fieldName": "Dernière réponse reçue",
+              "fieldValue": "={{ $('Extract Data').item.json.email_body }}"
+            },
+            {
+              "fieldName": "Date Dernier Message",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldName": "Brouillon IA",
+              "fieldValue": "={{ $json.intent_data.draft }}"
+            },
+            {
+              "fieldName": "Type Objection",
+              "fieldValue": "={{ $json.intent_data.objection_type }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -2144,
+        1104
+      ],
+      "id": "fa6944c7-86a9-4c45-bd26-cfb6096f769e",
+      "name": "Status: Video",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (let item of $input.all()) {\n  \n  // 1. SECURITY: If Gemini crashed\n  if (item.json.error || item.error || !item.json.content) {\n    item.json.intent_data = { \n        intent: \"OBJECTION\", \n        urgency: \"IMMEDIATE\", \n        explanation: \"⚠️ AI crashed\", \n        objection_type: null,\n        draft: \"Sorry, I couldn't generate a draft. Please reply manually.\"\n    };\n    continue;\n  }\n\n  // 2. Clean Gemini JSON (remove markdown tags)\n  let rawText = item.json?.content?.parts?.[0]?.text || item.json.text || item.json.message?.content || \"{}\";\n  let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n  \n  try {\n    item.json.intent_data = JSON.parse(cleanText);\n  } catch (error) {\n    // Security if AI misformatted its JSON\n    item.json.intent_data = { \n      intent: \"OBJECTION\", \n      urgency: \"IMMEDIATE\", \n      explanation: \"AI formatting error\", \n      objection_type: null, \n      draft: \"\" \n    };\n  }\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -3712,
+        1488
+      ],
+      "id": "461ff417-a81f-4c88-a281-601487ad9025",
+      "name": "Parse Intent"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-pro",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-pro"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "==PROSPECT RESPONSE:\n\"\"\"\n{{ $('Extract Data').item.json.email_body }}\n\n\"\"\"\n\nAnalyze this response and return only the JSON object with the intent, urgency, and explanation."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "You are an expert B2B data analyst for [YOUR COMPANY NAME]. MISSION 1 (Intent): Analyze a prospect's response and categorize it STRICTLY into: POSITIVE: Clearly accepts the video. QUESTION: Asks a question about the offer. OBJECTION: Shows a block (budget, already equipped, etc.). NEGATIVE: Flat refusal or unsubscribe. ABSENT: Auto-reply (Out of Office). MISSION 2 (Objection Type): If the intent is OBJECTION, define the cause among: \"Price\", \"Timing\", \"Competition\", \"No need\", \"Other\". Otherwise, return null. MISSION 3 (AI Draft): Write a response draft (2 to 3 sentences max) very natural, polite, and direct to advance the discussion or counter the objection. Do not put \"Hello\", nor signature. Just write the body text. EXPECTED FORMAT (STRICT JSON): { \"intent\": \"Choose among categories\", \"urgency\": \"IMMEDIATE | NORMAL | LOW\", \"explanation\": \"Short justification\", \"objection_type\": \"Category or null\", \"draft\": \"Response text\" }",
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -4064,
+        1488
+      ],
+      "id": "f2c101b6-cbb0-445f-8579-12b1795dfe36",
+      "name": "Analyze Intent",
+      "retryOnFail": true,
+      "maxTries": 5,
+      "waitBetweenTries": 5000,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Mail envoyé"
+            },
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Relance 1 envoyée"
+            },
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Relance 2 envoyée"
+            },
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "En congés"
+            },
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Objection traitée"
+            },
+            {
+              "value1": "={{ $('Find Lead NocoDB').item.json.Statut }}",
+              "value2": "Vidéo à tourner"
+            }
+          ],
+          "boolean": []
+        },
+        "combineOperation": "any"
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -4288,
+        1200
+      ],
+      "id": "ecd085b5-00c6-4829-9970-0b71aea0b8d0",
+      "name": "Prospect in Sequence?"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.Id }}",
+              "operation": "isNotEmpty"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        -4512,
+        1296
+      ],
+      "id": "72df4d15-bc61-43ef-967a-220412d19cda",
+      "name": "Lead Found?"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "limit": 1,
+        "options": {
+          "where": "=(Email,eq,{{ $json.sender_email }})"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        -4736,
+        1296
+      ],
+      "id": "e8467e35-11c7-457f-ab93-c1bd6e5ff180",
+      "name": "Find Lead NocoDB",
+      "alwaysOutputData": true,
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// 1. Extract PROSPECT email\nconst fromField = $input.item.json.from;\nlet email_exp = \"\";\nif (fromField && fromField.value && fromField.value.length > 0) {\n  email_exp = fromField.value[0].address;\n} else if (typeof fromField === 'string') {\n  const match = fromField.match(/<(.+)>/);\n  email_exp = match ? match[1] : fromField;\n}\n\n// 2. Extract OUR email (The mailbox that received the message)\nconst toField = $input.item.json.to;\nlet email_rec = \"\";\nif (toField && toField.value && toField.value.length > 0) {\n  email_rec = toField.value[0].address;\n} else if (typeof toField === 'string') {\n  const match = toField.match(/<(.+)>/);\n  email_rec = match ? match[1] : toField;\n}\n\nreturn { \n  json: { \n    sender_email: email_exp.toLowerCase().trim(),\n    recipient_email: email_rec.toLowerCase().trim(),\n    email_body: $input.item.json.text || $input.item.json.textPlain || $input.item.json.textHtml || \"No text\",\n    message_id: $input.item.json.messageId,\n    email_subject: $input.item.json.subject\n  } \n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -5184,
+        1104
+      ],
+      "id": "1d442e7a-9db0-4e21-b06f-124249d24df1",
+      "name": "Extract Data"
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        816
+      ],
+      "id": "5487786b-594a-4c67-9250-faf9b580e497",
+      "name": "Mailbox 4",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email10@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        624
+      ],
+      "id": "86f942f2-0c38-4d12-a849-b9bf54b93de1",
+      "name": "Mailbox 3",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email8@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        432
+      ],
+      "id": "ef36bf78-08b0-46fd-aeb8-cb8b29e81675",
+      "name": "Mailbox 2",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email6@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        240
+      ],
+      "id": "86abde55-ee25-4275-9fcc-a73db05337f8",
+      "name": "Mailbox 1",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email12@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        1776
+      ],
+      "id": "04c72cb9-9a73-429f-9a7f-c4270bea7881",
+      "name": "Mailbox 7",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email2@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        1968
+      ],
+      "id": "66c001e7-1e80-4c4e-80e8-a8865bb6d047",
+      "name": "Mailbox 8",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email17@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        1584
+      ],
+      "id": "2ed3029f-e68a-49e2-b079-01ef4f2e69cd",
+      "name": "Mailbox 9",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email18@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "format": "resolved",
+        "options": {
+          "customEmailConfig": "[\"UNSEEN\"]"
+        }
+      },
+      "type": "n8n-nodes-base.emailReadImap",
+      "typeVersion": 2,
+      "position": [
+        -5408,
+        1392
+      ],
+      "id": "22005cec-ed95-4346-816c-63f6278730c7",
+      "name": "Mailbox 10",
+      "credentials": {
+        "imap": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email19@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email13@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "2825745a-6fec-4b8e-98ac-8ade73f0ecff",
+      "name": "Send via Mailbox 7",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        1424
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email20@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email14@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "d62c440c-e181-4bfa-a1e6-71bcb4aa4169",
+      "name": "Send via Mailbox 8",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        1808
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email17@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email15@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "9c88e652-1c35-4416-b506-73b56182119a",
+      "name": "Send via Mailbox 9",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        1616
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email18@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "fromEmail": "\"[YOUR NAME] | [YOUR COMPANY NAME]\" <email16@yourdomain.com>",
+        "toEmail": "={{ $('Extract Data').item.json.sender_email }}",
+        "subject": "=Re: {{ $('Extract Data').item.json.email_subject.replace(/^Re:\\s*/i, '') }}",
+        "emailFormat": "text",
+        "text": "Awesome, by the way, you just saw our \"Speed-to-lead\" infrastructure in action: this email was sent exactly 90 seconds after your reply ;)\n\nI just added your website to my recording list for today. I'll sit in front of my mic, do the custom video audit for you, and send it by tomorrow morning at the latest.\n\nTalk soon,\n[YOUR NAME]",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "6b266137-5e4c-481a-a53e-d1d3057ae31b",
+      "name": "Send via Mailbox 10",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        -1248,
+        848
+      ],
+      "webhookId": "YOUR_WEBHOOK_ID",
+      "credentials": {
+        "smtp": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "email19@yourdomain.com"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.day.app/YOUR_DAY_APP_TOKEN/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "[YOUR COMPANY NAME]"
+            },
+            {
+              "name": "body",
+              "value": "💬 Nouvelle réponse !!"
+            },
+            {
+              "name": "icon",
+              "value": "https://i.postimg.cc/MH39ZQSd/favicon.jpg"
+            },
+            {
+              "name": "isArchive",
+              "value": "1"
+            },
+            {
+              "name": "level",
+              "value": "timeSensitive"
+            },
+            {
+              "name": "group",
+              "value": "[YOUR COMPANY NAME]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "Text",
+        "body": "Test 2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1840,
+        1600
+      ],
+      "id": "02674aed-f4f9-4fd3-b874-cb8b9214e938",
+      "name": "HTTP Request 1"
+    },
+    {
+      "parameters": {
+        "url": "https://api.day.app/YOUR_DAY_APP_TOKEN/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "[YOUR COMPANY NAME]"
+            },
+            {
+              "name": "body",
+              "value": "📮 Nouveau message !!"
+            },
+            {
+              "name": "icon",
+              "value": "https://i.postimg.cc/MH39ZQSd/favicon.jpg"
+            },
+            {
+              "name": "isArchive",
+              "value": "1"
+            },
+            {
+              "name": "level",
+              "value": "timeSensitive"
+            },
+            {
+              "name": "group",
+              "value": "[YOUR COMPANY NAME]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "Text",
+        "body": "Test 2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1872,
+        1328
+      ],
+      "id": "0d286aa4-2956-4a0a-b9c6-24bb09ad8bc3",
+      "name": "HTTP Request 0"
+    },
+    {
+      "parameters": {
+        "url": "https://api.day.app/YOUR_DAY_APP_TOKEN/",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "title",
+              "value": "[YOUR COMPANY NAME]"
+            },
+            {
+              "name": "body",
+              "value": "📌 Vidéo à tourner !!"
+            },
+            {
+              "name": "icon",
+              "value": "https://i.postimg.cc/MH39ZQSd/favicon.jpg"
+            },
+            {
+              "name": "isArchive",
+              "value": "1"
+            },
+            {
+              "name": "level",
+              "value": "timeSensitive"
+            },
+            {
+              "name": "group",
+              "value": "[YOUR COMPANY NAME]"
+            }
+          ]
+        },
+        "sendBody": true,
+        "contentType": "raw",
+        "rawContentType": "Text",
+        "body": "Test 2",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        -1856,
+        1152
+      ],
+      "id": "0089963d-1cb7-4a65-b938-d8df9d7e3706",
+      "name": "HTTP Request 2"
+    }
+  ],
+  "connections": {
+    "Lead Found (Bounce)?": {
+      "main": [
+        [
+          {
+            "node": "Status Bounced",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Workflow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Bounced Lead": {
+      "main": [
+        [
+          {
+            "node": "Lead Found (Bounce)?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Dead Email": {
+      "main": [
+        [
+          {
+            "node": "Find Bounced Lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is it a Bounce?": {
+      "main": [
+        [
+          {
+            "node": "Extract Dead Email",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Find Lead NocoDB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Discord ID": {
+      "main": [
+        [
+          {
+            "node": "Sort Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No - Discord Info 2": {
+      "main": [
+        [
+          {
+            "node": "Update Discord ID",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "No - Discord Info 1": {
+      "main": [
+        [
+          {
+            "node": "No - Discord Info 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Yes - Discord Info": {
+      "main": [
+        [
+          {
+            "node": "Sort Responses",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Response?": {
+      "main": [
+        [
+          {
+            "node": "No - Discord Info 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Yes - Discord Info",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code for Discord": {
+      "main": [
+        [
+          {
+            "node": "AI Response?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 6": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 5": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sort Responses": {
+      "main": [
+        [
+          {
+            "node": "Status: Video",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status: Question",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status: Objection",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status: Unsubscribed",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Status: Absent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status: Question": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request 0",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status: Objection": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch Inbox": {
+      "main": [
+        [
+          {
+            "node": "Reply 1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply 2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply 3",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply 4",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply 5",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reply 6",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 7",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 8",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 9",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send via Mailbox 10",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "1st Response?": {
+      "main": [
+        [
+          {
+            "node": "Switch Inbox",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Workflow 4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Status: Video": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request 2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Intent": {
+      "main": [
+        [
+          {
+            "node": "Code for Discord",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze Intent": {
+      "main": [
+        [
+          {
+            "node": "Parse Intent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Parse Intent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prospect in Sequence?": {
+      "main": [
+        [
+          {
+            "node": "Analyze Intent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Workflow 1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Found?": {
+      "main": [
+        [
+          {
+            "node": "Prospect in Sequence?",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Stop Workflow 3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Lead NocoDB": {
+      "main": [
+        [
+          {
+            "node": "Lead Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Data": {
+      "main": [
+        [
+          {
+            "node": "Is it a Bounce?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 4": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 3": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 2": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 1": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 7": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 8": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 9": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailbox 10": {
+      "main": [
+        [
+          {
+            "node": "Extract Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request 2": {
+      "main": [
+        [
+          {
+            "node": "1st Response?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a112fddf3ffd3951af3f038489902a0932fdd00ab2603bd8286c6079838b242c"
+  }
+}

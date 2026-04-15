@@ -1,0 +1,299 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Qualified & VIP Leads').item.json.Id }}"
+            },
+            {
+              "fieldName": "Mail d'outreach",
+              "fieldValue": "={{ $json.email_data.email_body }}"
+            },
+            {
+              "fieldName": "Objet d'outreach",
+              "fieldValue": "={{ $json.email_data.email_subject }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Mail prêt"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1248,
+        -96
+      ],
+      "id": "b78bea9d-1aa8-4b9a-a647-65f5b9e79300",
+      "name": "Update Email & Status",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "for (let item of $input.all()) {\n  let rawText = item.json?.content?.parts?.[0]?.text || item.json.text || item.json.message?.content || \"{}\";\n  let cleanText = rawText.replace(/```json/gi, '').replace(/```/g, '').trim();\n  try {\n    item.json.email_data = JSON.parse(cleanText);\n  } catch (error) {\n    // We simplified variables here to match the new prompt\n    item.json.email_data = { email_subject: \"AI Error\", email_body: \"AI Error\" };\n  }\n}\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        800,
+        0
+      ],
+      "id": "d4010d90-b77f-4176-bdc4-4f8307517e61",
+      "name": "Parse AI Response"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "fedfb606-e13c-445d-9b53-58fbf51fbd81",
+      "name": "Schedule Trigger 10m"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4f9aa969-4ebe-45b4-8b00-b37cdd6267e8",
+              "leftValue": "={{ $json.email_data.email_body }}",
+              "rightValue": "AI Error",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "571555ab-a610-4739-8071-ce305c84e5fc",
+              "leftValue": "={{ $json.email_data.email_body }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1024,
+        0
+      ],
+      "id": "6de4765e-ed02-4424-a78a-69ffa2ec4a33",
+      "name": "Check Error"
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "update",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldName": "Id",
+              "fieldValue": "={{ $('Fetch Qualified & VIP Leads').item.json.Id }}"
+            },
+            {
+              "fieldName": "Statut",
+              "fieldValue": "Erreur IA Mail"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        1248,
+        96
+      ],
+      "id": "a0efca28-0d2c-4c8a-b068-035efe976385",
+      "name": "Update Error Status",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "authentication": "nocoDbApiToken",
+        "operation": "getAll",
+        "projectId": "YOUR_PROJECT_ID",
+        "table": "YOUR_TABLE_ID",
+        "limit": 10,
+        "options": {
+          "sort": {
+            "property": [
+              {
+                "field": "Score via site",
+                "direction": "desc"
+              }
+            ]
+          },
+          "where": "=(Statut,eq,Qualifié)~or(Statut,eq,VIP Prêt pour l'IA)"
+        }
+      },
+      "type": "n8n-nodes-base.nocoDb",
+      "typeVersion": 3,
+      "position": [
+        224,
+        0
+      ],
+      "id": "738b6b05-43f7-40d3-bfe0-c48f55156987",
+      "name": "Fetch Qualified & VIP Leads",
+      "credentials": {
+        "nocoDbApiToken": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "NocoDB Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash-lite",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash-lite"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=PROSPECT DATA:\nFirst Name: {{ $json[\"First Name\"] }}\nCompany: {{ $json[\"Company Name\"] }}\nFactual site observation: {{ $json[\"Observation factuelle\"] }}\nStatus: {{ $json[\"Statut\"] }}\n\nHere is the STRICT TEMPLATE you must fill:\n\nSubject: your \"[cleaned button name in lowercase]\" page\n\nHi [First Name],\n\n{{ $json[\"Statut\"] == \"VIP Prêt pour l'IA\" ? \"Following our LinkedIn connection, I preferred to write to you here. \" : \"\" }}I stopped by your \"[Cleaned button name]\" page.\n\nFor this type of request, the first to respond often gains the upper hand - sometimes by just a few minutes.\n\nI've recorded a short video directly on the [Company] website to show you how to capture these requests in under 90 seconds, automatically and without changing your stack.\n\nShould I send it to you?\n\n[YOUR NAME]\n\nOUTPUT FORMAT:\nReturn only a strictly valid JSON object with this exact structure:\n\n{\n\"email_subject\": \"your \\\"[cleaned button name in lowercase]\\\" page\",\n\"email_body\": \"Hi {{ $json['First Name'] }},\\n\\n{{ $json[\\\"Statut\\\"] == \\\"VIP Prêt pour l'IA\\\" ? \\\"Following our LinkedIn connection, I preferred to write to you here. \\\" : \\\"\\\" }}I stopped by your \\\"[Cleaned button name]\\\" page.\\n\\nFor this type of request, the first to respond often gains the upper hand - sometimes by just a few minutes.\\n\\nI've recorded a short video directly on the {{ $json['Company Name'] }} website to show you how to capture these requests in under 90 seconds, automatically and without changing your stack.\\n\\nShould I send it to you?\\n\\n[YOUR NAME]\"\n}\n\nIMPORTANT: \n- Strictly respect the line breaks with \\n\\n.\n- Make sure to replace [Cleaned button name] with what you deduced (without visual adjectives).\n- Return ONLY the JSON."
+            }
+          ]
+        },
+        "jsonOutput": true,
+        "builtInTools": {},
+        "options": {
+          "systemMessage": "You are an elite B2B Consultant. You must prepare an ultra-high-performing cold email using a STRICT template. YOUR ONLY REAL AI JOB: Analyze the \"Factual site observation\" to extract ONLY the clickable text from the button or form (e.g., \"request a demo\", \"contact\", \"book a meeting\"). ABSOLUTE ANTI-GOOFY RULE: NEVER keep visual descriptions (big, red, top, button, etc.). Only isolate the words of the call to action. ABSOLUTE RULES: 1. You must respect the provided template structure word for word. No extra sentences. 2. The email subject must obligatorily be ALL IN LOWERCASE, without capitalization at the beginning. 3. You must insert the real first name, the real company, and the cleaned button name. Example: If the observation is \"big blue button 'Request a quote' at the bottom right\", you extract \"request a quote\".",
+          "temperature": 0.2
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        448,
+        0
+      ],
+      "id": "259d9373-ae84-4668-978e-397de21641d9",
+      "name": "Write Outreach Email",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "maxTries": 5,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIAL_ID",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "connections": {
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Check Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger 10m": {
+      "main": [
+        [
+          {
+            "node": "Fetch Qualified & VIP Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check Error": {
+      "main": [
+        [
+          {
+            "node": "Update Email & Status",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Error Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Qualified & VIP Leads": {
+      "main": [
+        [
+          {
+            "node": "Write Outreach Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Write Outreach Email": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "a112fddf3ffd3951af3f038489902a0932fdd00ab2603bd8286c6079838b242c"
+  }
+}
