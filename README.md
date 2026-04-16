@@ -1,5 +1,7 @@
 # 🚀 Fully Autonomous AI SDR (n8n + Gemini 2.5 + NocoDB)
 
+Hi everyone, today I'm sharing one of the **most complex workflows** I've built on n8n. It solves a big problem, and is a life-saver (and **budget-saver** too !) for founders who wants to launch a business but don't have much funds.
+
 **The problem:** B2B Agencies and Scale-ups waste an average of 48 hours to reply to inbound leads. By that time, the prospect has already booked a call with a competitor. 
 
 **The solution:** I built this "Speed-to-Lead" infrastructure. It intercepts inbound leads, scrapes their website, scores them with AI, and sends a hyper-personalized email in **under 90 seconds**. 
@@ -35,5 +37,5 @@ If you are a founder and you want to stop losing leads, but you don't have 40 ho
 
 I install this exact Revenue Infrastructure for B2B companies. You get the system, the landing page, and the automation, entirely done-for-you.
 
-👉 **[Send me a DM on Reddit]** or **[Book a free audit call with me here](https://cal.com/kilian-lrth-m3mlvh/audit)**. 
+👉 **Send me a DM on Reddit** or **[Book a free audit call with me here](https://cal.com/kilian-lrth-m3mlvh/audit)**. 
 *(I only take 2 custom setups per month to ensure quality).*
