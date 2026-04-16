@@ -1,29 +1,39 @@
-# 🚀 Fully Autonomous AI SDR (n8n + Gemini 2.5)
+# 🚀 Fully Autonomous AI SDR (n8n + Gemini 2.5 + NocoDB)
 
-This repository contains the exported JSON workflows to build a complete, autonomous outbound/inbound sales system using **n8n, Google Gemini 2.5, and NocoDB**. 
+**The problem:** B2B Agencies and Scale-ups waste an average of 48 hours to reply to inbound leads. By that time, the prospect has already booked a call with a competitor. 
 
-It is designed to replace expensive sending tools (like Lemlist/Instantly) by handling inbox rotation natively, and acts as an AI Sales Rep by scoring leads, classifying replies, and drafting responses.
+**The solution:** I built this "Speed-to-Lead" infrastructure. It intercepts inbound leads, scrapes their website, scores them with AI, and sends a hyper-personalized email in **under 90 seconds**. 
+
+This repository contains the exported JSON workflows to build this complete, autonomous outbound/inbound sales system using n8n.
+
+![https://imgur.com/a/vPrihsB]
+
+---
 
 ## 🏗️ The Architecture (Core Workflows)
 
 * **🧠 1. Lead Qualification:** Triggers every minute, fetches leads from NocoDB, scrapes their website via Browserless, and uses Gemini to score them /100 based on B2B buying signals (High-ticket, inbound strategy, etc.).
 * **✉️ 2 & 3. Email Writing & Sending (10-Inbox Rotation):** Generates highly personalized cold emails based on scraped CTA buttons. Uses a custom Javascript routing system to distribute the sending load across 10 different email domains, incorporating randomized human-timing delays to bypass spam filters.
 * **🤖 5 & 6. Speed-To-Lead & Intent Classifier:** An IMAP node reads all 10 inboxes simultaneously. It filters out bounces, and sends the actual replies to Gemini. Gemini classifies the intent (Positive, Question, Objection, Negative, Absent), tags the exact objection type, and drafts a contextual reply.
-* **👾 Discord Command Center:** If human intervention is needed (Question or Objection), the system pings a dedicated Discord channel with the prospect's message, the AI analysis, and the drafted response.
+* **👾 Discord Command Center:** If human intervention is needed, the system pings a dedicated Discord channel with the prospect's message, the AI analysis, and the drafted response.
 
-## ⚙️ How to Install & Use
+---
+
+## ⚙️ How to Install & Use (For Builders)
 
 1. Download the `.json` files from this repository.
-2. Go to your n8n instance and create a new workflow.
-3. Click on the top-right menu and select **"Import from File"** (or simply copy the raw JSON content and paste it directly onto the n8n canvas).
-4. **Re-configure your Credentials:** For security reasons, all credentials have been sanitized. You will need to:
-   * Reconnect your own NocoDB / Airtable nodes.
-   * Add your own SMTP/IMAP credentials for your email sending domains.
-   * Insert your Browserless API URL.
-   * Insert your Discord Bot Token and Guild/Channel IDs where `YOUR_DISCORD_TOKEN` or `YOUR_CHANNEL_ID` are mentioned.
-5. **Customize the Prompts:** Open the Gemini nodes and replace `[YOUR COMPANY NAME]` and `[YOUR HIGH-TICKET PRICE]` with your actual ICP and offers.
+2. Go to your n8n instance and select "Import from File".
+3. **Re-configure your Credentials:** Connect NocoDB, your 10 SMTP/IMAP credentials, Browserless API, and Discord Bot Tokens.
+4. **Customize the Prompts:** Open the Gemini nodes and replace `[YOUR COMPANY NAME]` and `[YOUR HIGH-TICKET PRICE]` with your actual ICP.
+5. *Disclaimer: Review the Javascript nodes (especially the inbox routing regex) to adapt them to your own domain names.*
 
-## ⚠️ Disclaimer
-This system was built for a specific B2B RevOps agency use case. Make sure to review the Javascript nodes (especially the inbox routing and bounce management regex) to adapt them to your own domain names.
+---
 
-Happy building! 🛠️
+## 💼 Want this running in your agency by next week? (For Founders)
+
+If you are a founder and you want to stop losing leads, but you don't have 40 hours to spend debugging API webhooks, writing Javascript regex, and setting up NocoDB databases... **I can build it for you.**
+
+I install this exact Revenue Infrastructure for B2B companies. You get the system, the landing page, and the automation, entirely done-for-you.
+
+👉 **[Send me a DM on Reddit]** or **[Book a free audit call with me here](TON_LIEN_CALENDLY)**. 
+*(I only take 2 custom setups per month to ensure quality).*
