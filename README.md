@@ -6,7 +6,7 @@
 
 This repository contains the exported JSON workflows to build this complete, autonomous outbound/inbound sales system using n8n.
 
-![Architecture n8n LORTH](https://i.imgur.com/vPrihsB.png)
+*<img width="1440" height="810" alt="Capture d’écran 2026-04-15 à 22 46 32" src="https://github.com/user-attachments/assets/d29f12e4-8b16-4d78-a54b-f1f506677a66" />*
 
 ---
 
@@ -35,5 +35,5 @@ If you are a founder and you want to stop losing leads, but you don't have 40 ho
 
 I install this exact Revenue Infrastructure for B2B companies. You get the system, the landing page, and the automation, entirely done-for-you.
 
-👉 **[Send me a DM on Reddit]** or **[Book a free audit call with me here](METS_TON_LIEN_CALENDLY_ICI)**. 
+👉 **[Send me a DM on Reddit]** or **[Book a free audit call with me here](https://cal.com/kilian-lrth-m3mlvh/audit)**. 
 *(I only take 2 custom setups per month to ensure quality).*
