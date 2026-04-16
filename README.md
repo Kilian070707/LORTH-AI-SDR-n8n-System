@@ -37,5 +37,5 @@ If you are a founder and you want to stop losing leads, but you don't have 40 ho
 
 I install this exact Revenue Infrastructure for B2B companies. You get the system, the landing page, and the automation, entirely done-for-you.
 
-👉 **Send me a DM on Reddit** or **[Book a free audit call with me here](https://cal.com/kilian-lrth-m3mlvh/audit)**. 
+👉 **[Send me a DM on Reddit here](https://www.reddit.com/message/compose/?to=OkPizza8463&subject=Interested%20in%20Custom%20AI%20SDR%20Setup)** or **[Book a free audit call with me here](https://cal.com/kilian-lrth-m3mlvh/audit)**.
 *(I only take 2 custom setups per month to ensure quality).*
